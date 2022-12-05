@@ -52,15 +52,6 @@ with st.sidebar:
   metric = st.selectbox("What metric you want to view?",list_of_columns)
   metric_column = ("_".join(metric.split(" ")).lower())
 
-# Data filtering and grouping
-df = df[(df["date"] >= date[0]) & (df["date"] <= date[1])]
-time_plot_data = df.groupby(["date"], as_index = False ).median()
-state_data = df.groupby(["state"], as_index = False ).median()
-state_data['text'] = state_data['state'] + '<br>' + \
-    'Bed Utilization ' + state_data['inpatient_bed_covid_utilization'].round(2).astype(str) + '<br>' + \
-    ' Staff Short Today ' + state_data['critical_staffing_shortage_today_yes'].astype(str) + '<br>' + \
-    ' Staff Shortage Week ' + state_data['critical_staffing_shortage_anticipated_within_week_yes'].astype(str) + '<br>' + \
-    'Covid Deaths ' + state_data['deaths_covid'].astype(str) 
 
 # Tab creation  
 about, dashboard, = st.tabs(["About", "Dashboard"])
@@ -70,6 +61,17 @@ with about:
 	st.markdown("put few lines from the reports and a link for the report to download")
 
 with dashboard :
+
+	# Data filtering and grouping
+	df = df[(df["date"] >= date[0]) & (df["date"] <= date[1])]
+	time_plot_data = df.groupby(["date"], as_index = False ).median()
+	state_data = df.groupby(["state"], as_index = False ).median()
+	state_data['text'] = state_data['state'] + '<br>' + \
+	    'Bed Utilization ' + state_data['inpatient_bed_covid_utilization'].round(2).astype(str) + '<br>' + \
+	    ' Staff Short Today ' + state_data['critical_staffing_shortage_today_yes'].astype(str) + '<br>' + \
+	    ' Staff Shortage Week ' + state_data['critical_staffing_shortage_anticipated_within_week_yes'].astype(str) + '<br>' + \
+	    'Covid Deaths ' + state_data['deaths_covid'].astype(str) 
+	    
 	st.markdown("**Notes:**")
 	st.markdown("""<p align="justify"><ul>
 		<li> For the timesereis graph the data is aggregated on day level and the median values are presented </li>
