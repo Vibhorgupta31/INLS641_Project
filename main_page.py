@@ -30,7 +30,6 @@ def load_lottieurl(url: str):
     return r.json()
 
 lottie_covid = load_lottieurl('https://assets10.lottiefiles.com/packages/lf20_CXxysN.json')
-
 st.subheader("INLS641: Visual Analytics")
 st.subheader("Impact of Covid on hospitals")
 st.markdown("*Team: Viola Goodacre, Vibhor Gupta*")
@@ -57,11 +56,16 @@ with st.sidebar:
 about, dashboard, = st.tabs(["About", "Dashboard"])
 
 with about:
+	st.markdown('''<p align="justify"> The project was a part of the course INLS641: Visual Analytics, taught by Prof. David Gotz.<br/> 
+		The project aimed to utilize visual infographics to come up with a problem and use the learnings to extract insights from the data.<br/>
+		Following the coursework, we came up with a the project to analyze the impact of Covid-19 on healthcare facilities. A detailed report for the whole project can be downloaded using the link below.
+''', unsafe_allow_html = True)
+	with open("INLS641_Fall'22_Project_Report_VG_VG.pdf", "rb") as fh:
+		pdf_file = fh.read()
 
-	st.markdown("put few lines from the reports and a link for the report to download")
+	st.download_button("Get the project report", data = pdf_file, file_name = "INLS641_Fall'22_Project_Report-VG_VG.pdf" )
 
 with dashboard :
-
 	# Data filtering and grouping
 	df = df[(df["date"] >= date[0]) & (df["date"] <= date[1])]
 	time_plot_data = df.groupby(["date"], as_index = False ).median()
@@ -71,14 +75,12 @@ with dashboard :
 	    ' Staff Short Today ' + state_data['critical_staffing_shortage_today_yes'].astype(str) + '<br>' + \
 	    ' Staff Shortage Week ' + state_data['critical_staffing_shortage_anticipated_within_week_yes'].astype(str) + '<br>' + \
 	    'Covid Deaths ' + state_data['deaths_covid'].astype(str) 
-	    
 	st.markdown("**Notes:**")
 	st.markdown("""<p align="justify"><ul>
 		<li> For the timesereis graph the data is aggregated on day level and the median values are presented </li>
 		<li> For the  map the data is aggregated on state level and the median values are presented </li>
 		</ul>
 		</p>""", unsafe_allow_html=True)
-
 	st.markdown(f"*Distribution of {metric} across time*")
 
 # Timeseries Plot
@@ -88,11 +90,14 @@ with dashboard :
 	p = figure(height=300, width=800, tools="xpan", toolbar_location=None,
 	           x_axis_type="datetime", x_axis_location="below",
 	           background_fill_color="#ffffff", x_range=(dates[0], dates[-1]))
-
 	p.line('date', 'close', source=source)
 	p.yaxis.axis_label = metric
 	p.xaxis.axis_label = "Dates"
 	st.bokeh_chart(p)
+	st.markdown("""**Insights:**""")
+	st.markdown("""If you look at different charts, by using the metric filter, you may find peaks occuring on the same time frame. 
+		Now this attracted our attention and we don;t know whether these correlations are due to chance or something is going behind the scene.
+		This could be a point to watch out for.""")
 
 # Map Plot
 	st.markdown(f"*Distribution of {metric} across the US*")
